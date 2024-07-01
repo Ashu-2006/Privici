@@ -1,0 +1,2 @@
+# Privici
+ Pricacy Policy Summarizer
