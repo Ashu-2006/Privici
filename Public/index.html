@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy Finder and Summarizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        #urlForm {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        #url {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result, #summary {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9e9e9;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Privacy Policy Finder and Summarizer</h1>
+        <form id="urlForm">
+            <input type="text" id="url" placeholder="Enter website URL" required>
+            <button type="submit">Find Privacy Policy</button>
+        </form>
+        <div id="result"></div>
+        <div id="summary"></div>
+    </div>
+
+    <script>
+        document.getElementById('urlForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const url = document.getElementById('url').value;
+            const resultDiv = document.getElementById('result');
+            const summaryDiv = document.getElementById('summary');
+            resultDiv.textContent = 'Searching...';
+            summaryDiv.textContent = '';
+            try {
+                const startTime = performance.now();
+                const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+                const data = await response.json();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data.contents, 'text/html');
+                const links = doc.querySelectorAll('a[href*="privacy"]');
+                let privacyLink = null;
+                for (const link of links) {
+                    const href = link.getAttribute('href');
+                    const text = link.textContent.toLowerCase();
+                    if (href && (text.includes('privacy') || href.toLowerCase().includes('privacy'))) {
+                        privacyLink = href;
+                        break;  // Stop after finding the first match
+                    }
+                }
+                if (privacyLink) {
+                    // Handle relative URLs
+                    if (!privacyLink.startsWith('http')) {
+                        const urlObj = new URL(url);
+                        privacyLink = new URL(privacyLink, urlObj.origin).href;
+                    }
+                    resultDiv.innerHTML = `Found: <a href="${privacyLink}" target="_blank">${privacyLink}</a>`;
+                    
+                    // Now, let's summarize the privacy policy
+                    summaryDiv.textContent = 'Summarizing privacy policy...';
+                    const summaryResponse = await fetch('/summarize', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ url: privacyLink }),
+                    });
+                    const summaryData = await summaryResponse.json();
+                    summaryDiv.innerHTML = `<h3>Summary:</h3><p>${summaryData.summary}</p>`;
+                } else {
+                    resultDiv.textContent = 'Privacy Policy not found.';
+                }
+                const endTime = performance.now();
+                console.log(`Execution time: ${endTime - startTime} milliseconds`);
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
