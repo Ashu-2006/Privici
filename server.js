@@ -3,66 +3,84 @@ const express = require('express');
 const path = require('path');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const OpenAI = require('openai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
-const port = 3005;
+const port = 3000;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize Google AI
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
 async function fetchPrivacyPolicy(url) {
     try {
+        console.log(`Fetching privacy policy from: ${url}`);
         const response = await axios.get(url);
         const $ = cheerio.load(response.data);
         
-        // This is a simple example. You might need to adjust the selector
-        // based on the specific structure of the websites you're targeting.
         const policyText = $('body').text();
         
+        console.log(`Policy text length: ${policyText.length} characters`);
         return policyText;
     } catch (error) {
         console.error('Error fetching privacy policy:', error);
-        throw new Error('Failed to fetch privacy policy');
+        throw new Error(`Failed to fetch privacy policy: ${error.message}`);
     }
 }
 
 async function summarizeText(text) {
     try {
-        const response = await openai.completions.create({
-            model: "gpt-3.5-turbo",
-            prompt: `Summarize this privacy policy:\n\n${text}\n\nSummary:`,
-            max_tokens: 150,
-            temperature: 0.5,
-        });
+        console.log('Summarizing text...');
+        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-        return response.choices[0].text.trim();
+        const prompt = `Summarize this privacy policy:\n\n${text.substring(0, 3000)}\n\nSummary:`;
+
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const summary = response.text();
+
+        console.log(`Generated summary: ${summary}`);
+        return summary;
     } catch (error) {
         console.error('Error summarizing text:', error);
-        throw new Error('Failed to summarize privacy policy');
+        throw new Error(`Failed to summarize privacy policy: ${error.message}`);
     }
 }
 
 app.post('/summarize', async (req, res) => {
     try {
         const { url } = req.body;
+        console.log(`Received request to summarize: ${url}`);
+        
+        if (!url) {
+            throw new Error('No URL provided');
+        }
+
         const policyText = await fetchPrivacyPolicy(url);
+        
+        if (!policyText) {
+            throw new Error('No policy text fetched');
+        }
+
         const summary = await summarizeText(policyText);
+        
+        if (!summary) {
+            throw new Error('Summary is undefined');
+        }
+        
         res.json({ summary });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error in /summarize endpoint:', error);
+        res.status(500).json({ error: error.message, stack: error.stack });
     }
 });
 
-// Serve the index.html file for the root route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:3005`);
+    console.log(`Server running at http://localhost:3000`);
 });
