@@ -24,6 +24,7 @@
             color: #333;
             text-align: center;
         }
+        
         #urlForm {
             display: flex;
             margin-bottom: 20px;
@@ -88,6 +89,7 @@
                     }
                 }
                 if (privacyLink) {
+                    // Handle relative URLs
                     // Handle relative URLs
                     if (!privacyLink.startsWith('http')) {
                         const urlObj = new URL(url);
