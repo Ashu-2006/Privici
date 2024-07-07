@@ -6,7 +6,7 @@ const cheerio = require('cheerio');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -78,7 +78,7 @@ app.post('/summarize', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.listen(port, () => {
