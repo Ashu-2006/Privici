@@ -35,7 +35,7 @@ async function summarizeText(text) {
         console.log('Summarizing text...');
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-        const prompt = `Summarize this privacy policy:\n\n${text.substring(0, 3000)}\n\nSummary:`;
+        const prompt = `Summarize the given Privacy Policy in detail but in 600 words and in Simple language. Talk about the Information collected, Collection Method, Use of information, Sharing and Storage of information, Cookies, User Rights, give the Contact Info if available and also share any unique Points mentioned in the Policy(if none then dont add this section). Present a well Formatted Summary which is easy to scan:\n\n${text.substring(0, 3000)}\n\nSummary:`;
 
         const result = await model.generateContent(prompt);
         const response = await result.response;
@@ -82,5 +82,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:3000`);
+    console.log(`Server running at http://localhost:${port}`);
 });
