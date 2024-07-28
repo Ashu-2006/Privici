@@ -1,0 +1,159 @@
+body{
+    background-image: url(Background\ Img.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    margin: 0%;
+    padding: 0%;
+    background-color: #040404;
+    overflow-x: scroll;
+    overflow-y: scroll;
+    color: white;
+}
+.centered-form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 50%;
+    bottom: 50%;
+    max-width: 500%;
+}
+.top-left-image{
+    position: absolute;
+    width: 160px;
+    height: auto;
+    margin: 10px;
+    top: 2%;
+    left: 3%;
+    align-items: center;
+    border-color: #72d2de;
+    border-radius: 10%;
+    cursor: pointer;
+}
+.second-top-left{
+    position: absolute;
+    width: 125px;
+    height: auto;
+    margin: 10px;
+    top: 2.8%;
+    left: 6%;
+    align-items: center;
+    border-color: #72d2de;
+    border-radius: 10%;
+    cursor: pointer;
+    
+}
+.sh{
+    position: absolute;
+    left: 89%;
+    top: 5%;
+    width: 130px;
+    transition-duration: 0.3s;
+}
+
+.sh:hover{
+ background-color:darkgray;
+ opacity: 100%;
+}
+
+.container {
+    
+    max-width: 500%;
+    padding: 20px;
+    border-radius: 40px;
+   
+    
+}
+
+
+#urlForm {
+   
+    max-width: 500%;
+    border-color: cadetblue;
+    
+    
+    
+}
+#url {
+    padding: 10px;
+    font-size: 16px;
+    width: 900px;
+    max-width: 800px;
+    box-sizing: border-box;
+    
+    border-radius: 10px;
+    background-color: gray;
+   color: white;
+    font-weight: bolder;
+    border-color: rgb(255, 255, 255);
+   
+}
+button {
+    padding: 10px 20px;
+    background-color:rgb(48, 68, 241);
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    margin-left: -14px;
+    display: block;
+    box-sizing: border-box;
+    width: 300px;
+    z-index: 1;
+    
+    
+}
+button:hover {
+    background-color: #040404;
+}
+#result, #summary {
+    margin-top: 0px;
+    padding: 0px;
+    
+    background-color: rgba(128, 128, 128, 0.3);
+    border-radius: 5px;
+   color: white;
+    width: 1086px;
+    box-sizing: border-box;
+    
+    font-weight: bolder;
+    
+}
+h1{
+    color: rgb(255, 255, 255);
+    font-size:55px;
+    
+}
+.social-box {
+    background-color: #f6f0f0;
+    padding: 20px;
+    border-radius: 10px;
+    
+   
+}
+.social-container {
+    display: flex;
+    gap: 20px;
+    
+}
+
+.social-container a {
+    display: inline-block;
+    transition: transform 0.3s;
+}
+
+.social-container a:hover {
+    transform: scale(1.1);
+}
+
+.social-container img {
+    width: 50px;
+    height: 50px;
+}
+
+#copyimage{
+    cursor: pointer;
+}
